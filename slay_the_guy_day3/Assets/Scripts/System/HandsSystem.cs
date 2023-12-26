@@ -47,8 +47,6 @@ public class HandsSystem
             handsUIComponent.HandsUIList[i].ManaText.text = handsUIComponent.HandsList[i].ManaPoint.ToString();
             handsUIComponent.HandsUIList[i].TitleText.text = handsUIComponent.HandsList[i].Title;
             handsUIComponent.HandsUIList[i].DescriptionText.text = handsUIComponent.HandsList[i].Description;
-
-            Debug.Log(handsUIComponent.HandsList[i].Title + "を手札に追加");
         }
     }
 
