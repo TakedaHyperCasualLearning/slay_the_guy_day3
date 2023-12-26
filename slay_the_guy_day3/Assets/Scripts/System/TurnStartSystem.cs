@@ -2,59 +2,36 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum TurnState
-{
-    None,
-    Start,
-    Draw,
-    Battle,
-    End
-};
-
-public class TurnSystem
+public class TurnStartSystem
 {
     private GameObject playerObject;
     private List<TurnComponent> turnComponentList = new List<TurnComponent>();
 
-    public TurnSystem(GameEvent gameEvent, GameObject player)
+    public TurnStartSystem(GameEvent gameEvent, GameObject player)
     {
-        playerObject = player;
+        this.playerObject = player;
         gameEvent.AddComponentList += AddComponentList;
         gameEvent.RemoveComponentList += RemoveComponentList;
-        gameEvent.TurnEnd += TurnEnd;
     }
 
-    private void Initialize(TurnComponent turnComponent)
-    {
-        if (turnComponent.gameObject == playerObject)
-        {
-            turnComponent.TurnStatus = TurnState.Start;
-            turnComponent.IsMyTurn = true;
-            return;
-        }
-
-        turnComponent.TurnStatus = TurnState.None;
-        turnComponent.IsMyTurn = false;
-    }
-
-    private void TurnEnd(GameObject gameObject)
+    public void OnUpdate()
     {
         for (int i = 0; i < turnComponentList.Count; i++)
         {
             TurnComponent turnComponent = turnComponentList[i];
-
             if (!turnComponent.gameObject.activeSelf) continue;
 
-            if (turnComponent.gameObject == gameObject)
+            if (!turnComponent.IsMyTurn || turnComponent.TurnStatus != TurnState.Start) continue;
+
+            if (turnComponent.gameObject != playerObject)
             {
-                turnComponent.TurnStatus = TurnState.None;
-                turnComponent.IsMyTurn = false;
+                turnComponent.TurnStatus = TurnState.Battle;
+                Debug.Log(turnComponent.gameObject.name + "のバトルフェーズ");
                 continue;
             }
 
-            turnComponent.TurnStatus = TurnState.Start;
-            turnComponent.IsMyTurn = true;
-            Debug.Log(turnComponent.gameObject.name + "のターン");
+            turnComponent.TurnStatus = TurnState.Draw;
+            Debug.Log(turnComponent.gameObject.name + "のドローフェーズ");
         }
     }
 
@@ -65,8 +42,6 @@ public class TurnSystem
         if (turnComponent == null) return;
 
         turnComponentList.Add(turnComponent);
-
-        Initialize(turnComponent);
     }
 
     private void RemoveComponentList(GameObject gameObject)

@@ -7,6 +7,7 @@ public class Main : MonoBehaviour
     [SerializeField] GameObject player;
     [SerializeField] GameObject enemy;
     [SerializeField] List<GameObject> cardList;
+    [SerializeField] GameObject turnEndButton;
 
     private GameEvent gameEvent;
 
@@ -14,6 +15,11 @@ public class Main : MonoBehaviour
     private HitPointUISystem hitPointUISystem;
     private ManaUISystem manaUISystem;
     private CardSelectSystem cardSelectSystem;
+    private EnemyActionSystem enemyActionSystem;
+    private TurnSystem turnSystem;
+    private TurnEndButtonSystem turnEndButtonSystem;
+    private TurnStartSystem turnStartSystem;
+    private TurnEndSystem turnEndSystem;
 
 
     void Start()
@@ -24,6 +30,11 @@ public class Main : MonoBehaviour
         hitPointUISystem = new HitPointUISystem(gameEvent);
         manaUISystem = new ManaUISystem(gameEvent);
         cardSelectSystem = new CardSelectSystem(gameEvent);
+        enemyActionSystem = new EnemyActionSystem(gameEvent, player);
+        turnSystem = new TurnSystem(gameEvent, player);
+        turnEndButtonSystem = new TurnEndButtonSystem(gameEvent, player);
+        turnStartSystem = new TurnStartSystem(gameEvent, player);
+        turnEndSystem = new TurnEndSystem(gameEvent);
 
         gameEvent.AddComponentList?.Invoke(player);
         gameEvent.AddComponentList?.Invoke(enemy);
@@ -31,6 +42,7 @@ public class Main : MonoBehaviour
         {
             gameEvent.AddComponentList?.Invoke(card);
         }
+        gameEvent.AddComponentList?.Invoke(turnEndButton);
     }
 
     void Update()
@@ -39,5 +51,8 @@ public class Main : MonoBehaviour
         hitPointUISystem.OnUpdate();
         manaUISystem.OnUpdate();
         cardSelectSystem.OnUpdate();
+        enemyActionSystem.OnUpdate();
+        turnStartSystem.OnUpdate();
+        turnEndSystem.OnUpdate();
     }
 }
